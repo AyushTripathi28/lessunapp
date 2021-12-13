@@ -1,10 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:lessunapp/screens/home/home_page.dart';
-
-import 'login_page.dart';
-import 'signup_page.dart';
 
 class AuthPage extends StatelessWidget {
   const AuthPage({Key? key}) : super(key: key);
@@ -35,8 +31,7 @@ class AuthPage extends StatelessWidget {
                     textStyle: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                   onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => LoginPage()));
+                    Navigator.of(context).pushNamed('/loginPage');
                   },
                 ),
               ),
@@ -53,8 +48,7 @@ class AuthPage extends StatelessWidget {
                     textStyle: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                   onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => SignupPage()));
+                    Navigator.of(context).pushNamed('/signupPage');
                   },
                 ),
               ),
@@ -63,8 +57,7 @@ class AuthPage extends StatelessWidget {
               // ),
               TextButton(
                   onPressed: () {
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => HomePage()));
+                    Navigator.of(context).pushNamed('/homePage');
                   },
                   child: Text('Login as Guest')),
               SizedBox(
