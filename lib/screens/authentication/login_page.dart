@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:lessunapp/screens/authentication/signup_page.dart';
 import 'package:lessunapp/services/auth_service.dart';
+import 'package:lessunapp/sharedPref/sharedPref.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -145,6 +146,7 @@ class _LoginPageState extends State<LoginPage> {
                                   context);
                               if (result != null) {
                                 print("Login Successful");
+                                LocalStore.setUid(result.uid);
                                 print(result);
 
                                 Navigator.of(context).pushNamedAndRemoveUntil(

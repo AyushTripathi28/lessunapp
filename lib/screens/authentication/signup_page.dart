@@ -1,9 +1,11 @@
 // ignore_for_file: prefer_const_constructors, avoid_print
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:lessunapp/services/auth_service.dart';
+import 'package:lessunapp/sharedPref/sharedPref.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({Key? key}) : super(key: key);
@@ -214,9 +216,21 @@ class _SignupPageState extends State<SignupPage> {
                                 User? result = await AuthService().registerUser(
                                     emailController.text,
                                     passwordController.text,
+                                    nameController.text,
                                     context);
                                 if (result != null) {
                                   print("Sign Up successful");
+                                  LocalStore.setUid(result.uid);
+                                  FirebaseFirestore.instance
+                                      .collection("users")
+                                      .doc(result.uid)
+                                      .set({
+                                    'username': "",
+                                    'name': nameController.text,
+                                    'email': emailController.text,
+                                    'about': "",
+                                    "profilepic": "",
+                                  }).then((_) => print("Success"));
                                   Navigator.popAndPushNamed(
                                       context, '/loginPage');
                                 } else {

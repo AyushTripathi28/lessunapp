@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:lessunapp/screens/userprofile/profile_page.dart';
 import 'package:lessunapp/services/auth_service.dart';
+import 'package:lessunapp/sharedPref/sharedPref.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -42,7 +43,9 @@ class _HomePageState extends State<HomePage> {
           ),
           IconButton(
             icon: Icon(Icons.person, color: Colors.black),
-            onPressed: () {
+            onPressed: () async {
+              String? uid = await LocalStore.getUid("uid");
+              print(uid);
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => ProfilePage()));
             },
