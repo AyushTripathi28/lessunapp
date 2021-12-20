@@ -42,10 +42,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
-// import 'complete.dart';
-// import 'progressar.dart';
-// import 'screens/authentication/auth_page.dart';
-
-//ExerciseDate

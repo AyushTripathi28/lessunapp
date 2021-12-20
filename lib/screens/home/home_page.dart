@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:lessunapp/screens/userprofile/profile_page.dart';
 import 'package:lessunapp/services/auth_service.dart';
 import 'package:lessunapp/sharedPref/sharedPref.dart';
+import 'package:lessunapp/widgets/homefeed_container.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -90,6 +91,15 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                       ),
+                      HomeFeedPost(
+                          title: "Welcome to Lessun!",
+                          type: "Announcements",
+                          userImg: "userImg"),
+                      HomeFeedPost(
+                          title:
+                              "How can we maximize our experience at Lessun?",
+                          type: "Announcements",
+                          userImg: "userImg"),
                     ],
                   ),
                 ),

@@ -1,11 +1,33 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, prefer_typing_uninitialized_variables, avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:lessunapp/services/user_service.dart';
+import 'package:lessunapp/sharedPref/sharedPref.dart';
 
 import 'edit_profile_page.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  var result;
+  String? uid;
+  @override
+  void initState() {
+    result = getUserData();
+    print("Data Retrieved from firebase of user");
+    print("result=>" + result.toString());
+    super.initState();
+  }
+
+  getUserData() async {
+    uid = await LocalStore.getUid('uid');
+    return await UserService().getUserData(uid);
+  }
 
   @override
   Widget build(BuildContext context) {
