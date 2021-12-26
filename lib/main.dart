@@ -4,7 +4,11 @@ import 'package:lessunapp/screens/authentication/auth_page.dart';
 import 'package:lessunapp/screens/authentication/login_page.dart';
 import 'package:lessunapp/screens/authentication/signup_page.dart';
 import 'package:lessunapp/screens/home/home_page.dart';
+import 'package:lessunapp/screens/home/topic.dart';
+import 'package:lessunapp/screens/userprofile/profile_page.dart';
 import 'package:lessunapp/services/auth_service.dart';
+
+import 'screens/home/filterpage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,8 +31,13 @@ class MyApp extends StatelessWidget {
         '/authPage': (BuildContext context) => const AuthPage(),
         '/loginPage': (BuildContext context) => const LoginPage(),
         '/signupPage': (BuildContext context) => const SignupPage(),
-        '/homePage': (BuildContext context) => const HomePage()
+        '/homePage': (BuildContext context) => const HomePage(),
+        '/profilePage': (BuildContext context) => const ProfilePage(),
+        '/filterPage': (BuildContext context) => const FilterPage(),
+        '/makePostPage': (BuildContext context) => const TopicPage(),
       },
+      //
+
       home: StreamBuilder(
         stream: AuthService().firebaseAuth.authStateChanges(),
         builder: (context, snapshot) {

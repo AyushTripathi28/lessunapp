@@ -14,19 +14,21 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  var result;
+  Map<String, dynamic>? result;
   String? uid;
   @override
   void initState() {
-    result = getUserData();
-    print("Data Retrieved from firebase of user");
-    print("result=>" + result.toString());
+    getUserData();
+
     super.initState();
   }
 
-  getUserData() async {
+  void getUserData() async {
     uid = await LocalStore.getUid('uid');
-    return await UserService().getUserData(uid);
+    print(uid);
+    result = await UserService().getUserData(uid);
+    print("result=");
+    print(result);
   }
 
   @override

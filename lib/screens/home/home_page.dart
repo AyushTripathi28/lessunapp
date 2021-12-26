@@ -29,6 +29,12 @@ class _HomePageState extends State<HomePage> {
         elevation: 0,
         actions: [
           IconButton(
+            icon: Icon(Icons.post_add, color: Colors.black),
+            onPressed: () {
+              Navigator.pushNamed(context, "/makePostPage");
+            },
+          ),
+          IconButton(
             icon: Icon(Icons.exit_to_app, color: Colors.black),
             onPressed: () async {
               setState(() {
@@ -47,8 +53,8 @@ class _HomePageState extends State<HomePage> {
             onPressed: () async {
               String? uid = await LocalStore.getUid("uid");
               print(uid);
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => ProfilePage()));
+
+              Navigator.pushNamed(context, "/profilePage");
             },
           ),
         ],
@@ -63,43 +69,62 @@ class _HomePageState extends State<HomePage> {
                 child: Center(
                   child: Column(
                     children: [
-                      Container(
-                        height: size.height * 0.07,
-                        // width: size.width * 0.9,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(80)),
-                        ),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 30, vertical: 0),
-                        margin:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                        child: TextField(
-                          decoration: InputDecoration(
-                            labelText: 'Start typing',
-                            // hintText: 'Start typing',
-                            suffixIcon: Icon(Icons.search),
-                            suffixIconConstraints: BoxConstraints(
-                              minWidth: 0,
-                              minHeight: 0,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              height: size.height * 0.07,
+                              // width: size.width * 0.9,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(80)),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 30, vertical: 0),
+                              margin: EdgeInsets.only(
+                                  left: 20, top: 10, bottom: 10),
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  labelText: 'Start typing',
+                                  // hintText: 'Start typing',
+                                  suffixIcon: Icon(Icons.search),
+                                  suffixIconConstraints: BoxConstraints(
+                                    minWidth: 0,
+                                    minHeight: 0,
+                                  ),
+                                  //border
+                                  focusedBorder: InputBorder.none,
+                                  enabledBorder: InputBorder.none,
+                                  errorBorder: InputBorder.none,
+                                  disabledBorder: InputBorder.none,
+                                ),
+                              ),
                             ),
-                            //border
-                            focusedBorder: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
                           ),
-                        ),
+                          InkWell(
+                            onTap: () async {
+                              var value = await Navigator.pushNamed(
+                                  context, "/filterPage");
+                              print(value);
+                            },
+                            child: Icon(
+                              Icons.filter_alt_outlined,
+                              size: 40,
+                            ),
+                          )
+                        ],
                       ),
                       HomeFeedPost(
-                          title: "Welcome to Lessun!",
-                          type: "Announcements",
-                          userImg: "userImg"),
+                        title: "Welcome to Lessun!",
+                        type: "Announcements",
+                        userImg: "userImg",
+                      ),
                       HomeFeedPost(
-                          title:
-                              "How can we maximize our experience at Lessun?",
-                          type: "Announcements",
-                          userImg: "userImg"),
+                        title: "How can we maximize our experience at Lessun?",
+                        type: "Announcements",
+                        userImg: "userImg",
+                      ),
                     ],
                   ),
                 ),
