@@ -26,6 +26,7 @@ class _TopicPageState extends State<TopicPage> {
 
   String save() {
     final content = jsonEncode(_controller.document);
+    print(_controller.document.toPlainText());
     return content.toString();
   }
 
@@ -71,8 +72,9 @@ class _TopicPageState extends State<TopicPage> {
               size: 30,
             ),
             onPressed: () async {
-              print("working on submit");
-              if (formkey.currentState!.validate()) {
+              if (formkey.currentState!.validate() &&
+                  _controller.document.toPlainText() != '\n') {
+                print("working on submit");
                 FirebaseFirestore.instance
                     .collection("forum")
                     .add({
@@ -91,6 +93,10 @@ class _TopicPageState extends State<TopicPage> {
                         (error) => print("Failed to add forum: $error"));
                 // changeScreenReplancement(
                 //     context, ForumPage());
+              } else {
+                //todo  Altert for empty textbox.
+                String s = save();
+                print(s);
               }
             },
           ),
