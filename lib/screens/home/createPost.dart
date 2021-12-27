@@ -7,14 +7,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:zefyrka/zefyrka.dart';
 
-class TopicPage extends StatefulWidget {
-  const TopicPage({Key? key}) : super(key: key);
+class CreatePostPage extends StatefulWidget {
+  const CreatePostPage({Key? key}) : super(key: key);
 
   @override
-  _TopicPageState createState() => _TopicPageState();
+  _CreatePostPageState createState() => _CreatePostPageState();
 }
 
-class _TopicPageState extends State<TopicPage> {
+class _CreatePostPageState extends State<CreatePostPage> {
   String category = "IB";
   String title = "";
   String body = "";
@@ -93,6 +93,7 @@ class _TopicPageState extends State<TopicPage> {
                         (error) => print("Failed to add forum: $error"));
                 // changeScreenReplancement(
                 //     context, ForumPage());
+                Navigator.pop(context);
               } else {
                 //todo  Altert for empty textbox.
                 String s = save();

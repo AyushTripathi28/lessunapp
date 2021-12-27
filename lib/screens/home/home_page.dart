@@ -1,5 +1,7 @@
-// ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors
+// ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors, avoid_print
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:lessunapp/screens/userprofile/profile_page.dart';
 import 'package:lessunapp/services/auth_service.dart';
@@ -14,7 +16,22 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String filter = "";
+  String searchFilter = "";
+  TextEditingController searchController = TextEditingController();
   bool? loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    //fill countries with objects
+    searchController.addListener(() {
+      setState(() {
+        searchFilter = searchController.text;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -85,6 +102,7 @@ class _HomePageState extends State<HomePage> {
                               margin: EdgeInsets.only(
                                   left: 20, top: 10, bottom: 10),
                               child: TextField(
+                                controller: searchController,
                                 decoration: InputDecoration(
                                   labelText: 'Start typing',
                                   // hintText: 'Start typing',
@@ -106,7 +124,11 @@ class _HomePageState extends State<HomePage> {
                             onTap: () async {
                               var value = await Navigator.pushNamed(
                                   context, "/filterPage");
-                              print(value);
+
+                              print(value.toString());
+                              setState(() {
+                                filter = value.toString();
+                              });
                             },
                             child: Icon(
                               Icons.filter_alt_outlined,
@@ -115,15 +137,49 @@ class _HomePageState extends State<HomePage> {
                           )
                         ],
                       ),
-                      HomeFeedPost(
-                        title: "Welcome to Lessun!",
-                        type: "Announcements",
-                        userImg: "userImg",
+                      Divider(
+                        thickness: 1,
+                        color: Colors.grey[400],
                       ),
-                      HomeFeedPost(
-                        title: "How can we maximize our experience at Lessun?",
-                        type: "Announcements",
-                        userImg: "userImg",
+/**========================================================================
+ **                            Code for Feed Post from firebase
+ *========================================================================**/
+
+                      StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection("forum")
+                            .orderBy("pinned", descending: true)
+                            .snapshots(),
+                        builder:
+                            (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (!snapshot.hasData) {
+                            return CircularProgressIndicator();
+                          } else {
+                            return Expanded(
+                              child: ListView(
+                                  scrollDirection: Axis.vertical,
+                                  children: snapshot.data!.docs.map((forum) {
+                                    if (forum["title"]
+                                        .toUpperCase()
+                                        .contains(searchFilter.toUpperCase())) {
+                                      return Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            16, 0, 16, 0),
+                                        child: HomeFeedPost(
+                                          id: forum.id,
+                                          title: forum["title"],
+                                          type: forum["category"],
+                                          userImg: "",
+                                          ifPined: forum["pinned"],
+                                        ),
+                                      );
+                                    } else {
+                                      return Center();
+                                    }
+                                  }).toList()),
+                            );
+                          }
+                        },
                       ),
                     ],
                   ),

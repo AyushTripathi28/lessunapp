@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class HomeFeedPost extends StatefulWidget {
@@ -12,7 +13,9 @@ class HomeFeedPost extends StatefulWidget {
     this.likeCount = 0,
     this.ifPined = false,
     this.ifLiked = false,
+    required this.id,
   }) : super(key: key);
+  final String id;
   final String? title;
   final String? type;
   final String userImg;
@@ -63,22 +66,77 @@ class _HomeFeedPostState extends State<HomeFeedPost> {
                         // ignore: prefer_const_literals_to_create_immutables
                         children: [
                           Text(
-                            widget.title!,
+                            widget.title!.length < 50
+                                ? widget.title!
+                                : widget.title!.substring(0, 50) + '...',
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Chip(
-                            label: Text(
-                              widget.type!,
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            backgroundColor: Colors.purple,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                          ),
+                          StreamBuilder(
+                              stream: FirebaseFirestore.instance
+                                  .collection("category")
+                                  .snapshots(),
+                              builder: (context,
+                                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                                if (!snapshot.hasData) {
+                                  return Center(
+                                      //   child: Text(
+                                      // "Loading",
+                                      // style: TextStyle(
+                                      //     color: Colors.black, fontSize: 16),
+                                      // maxLines: 1,
+                                      // )
+                                      );
+                                } else {
+                                  return SizedBox(
+                                    // width: size.width * 0.3,
+                                    height: size.height * 0.05,
+                                    child: ListView(
+                                        physics: NeverScrollableScrollPhysics(),
+                                        // scrollDirection: Axis.horizontal,
+                                        children:
+                                            snapshot.data!.docs.map((color) {
+                                          if (color.id ==
+                                              widget.type!.toLowerCase()) {
+                                            return Row(
+                                              children: [
+                                                Chip(
+                                                  label: Text(
+                                                    widget.type!,
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  ),
+                                                  backgroundColor:
+                                                      HexColor(color["color"]),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
+                                                  ),
+                                                ),
+                                              ],
+                                            );
+
+                                            // Container(
+                                            //   //
+                                            //   width: 15,
+                                            //   height: 15,
+                                            //   decoration: BoxDecoration(
+                                            //     color: HexColor(color["color"]),
+                                            //   ),
+                                            // );
+                                          } else {
+                                            return SizedBox(
+                                                //
+                                                width: 0,
+                                                height: 0);
+                                          }
+                                        }).toList()),
+                                  );
+                                }
+                              }),
                         ],
                       ),
                     ),
@@ -86,6 +144,12 @@ class _HomeFeedPostState extends State<HomeFeedPost> {
                       onTap: () {
                         setState(() {
                           widget.ifPined = !widget.ifPined;
+                          FirebaseFirestore.instance
+                              .collection("forum")
+                              .doc(widget.id)
+                              .update({
+                            "pinned": widget.ifPined,
+                          });
                         });
                       },
                       child: Icon(
@@ -194,3 +258,15 @@ class _HomeFeedPostState extends State<HomeFeedPost> {
 //         ),
 //         horizontalTitleGap: 0,
 //       ),
+
+class HexColor extends Color {
+  static int _getColorFromHex(String hexColor) {
+    hexColor = hexColor.toUpperCase().replaceAll("#", "");
+    if (hexColor.length == 6) {
+      hexColor = "FF" + hexColor;
+    }
+    return int.parse(hexColor, radix: 16);
+  }
+
+  HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
+}
