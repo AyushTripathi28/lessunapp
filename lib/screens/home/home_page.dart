@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:lessunapp/screens/home/feedpostdetail.dart';
 import 'package:lessunapp/screens/userprofile/profile_page.dart';
 import 'package:lessunapp/services/auth_service.dart';
 import 'package:lessunapp/sharedPref/sharedPref.dart';
@@ -165,12 +166,37 @@ class _HomePageState extends State<HomePage> {
                                       return Padding(
                                         padding: const EdgeInsets.fromLTRB(
                                             16, 0, 16, 0),
-                                        child: HomeFeedPost(
-                                          id: forum.id,
-                                          title: forum["title"],
-                                          type: forum["category"],
-                                          userImg: "",
-                                          ifPined: forum["pinned"],
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    FeedPostDetailPage(
+                                                  body: forum["body"],
+                                                  category: forum["category"],
+                                                  likes: forum["likes"],
+                                                  owner: forum["owner"],
+                                                  owneravatar:
+                                                      forum["owneravatar"],
+                                                  title: forum["title"],
+                                                  madeat: forum["madeat"],
+                                                  id: forum.id,
+                                                  replyCount: 0,
+                                                  ifLiked: false,
+                                                  ifPined: forum["pinned"],
+                                                  likeCount: 0,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: HomeFeedPost(
+                                            id: forum.id,
+                                            title: forum["title"],
+                                            category: forum["category"],
+                                            userImg: "",
+                                            ifPined: forum["pinned"],
+                                          ),
                                         ),
                                       );
                                     } else {

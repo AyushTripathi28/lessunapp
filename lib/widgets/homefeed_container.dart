@@ -7,7 +7,7 @@ class HomeFeedPost extends StatefulWidget {
   HomeFeedPost({
     Key? key,
     required this.title,
-    required this.type,
+    required this.category,
     required this.userImg,
     this.replyCount = 0,
     this.likeCount = 0,
@@ -17,7 +17,7 @@ class HomeFeedPost extends StatefulWidget {
   }) : super(key: key);
   final String id;
   final String? title;
-  final String? type;
+  final String? category;
   final String userImg;
   final int replyCount;
   int likeCount;
@@ -99,12 +99,12 @@ class _HomeFeedPostState extends State<HomeFeedPost> {
                                         children:
                                             snapshot.data!.docs.map((color) {
                                           if (color.id ==
-                                              widget.type!.toLowerCase()) {
+                                              widget.category!.toLowerCase()) {
                                             return Row(
                                               children: [
                                                 Chip(
                                                   label: Text(
-                                                    widget.type!,
+                                                    widget.category!,
                                                     style: TextStyle(
                                                         color: Colors.white),
                                                   ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:lessunapp/screens/authentication/auth_page.dart';
 import 'package:lessunapp/screens/authentication/login_page.dart';
 import 'package:lessunapp/screens/authentication/signup_page.dart';
+
 import 'package:lessunapp/screens/home/home_page.dart';
 
 import 'package:lessunapp/screens/userprofile/profile_page.dart';
