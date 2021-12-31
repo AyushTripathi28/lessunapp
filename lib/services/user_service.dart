@@ -10,24 +10,27 @@ class UserService {
   Future getUserData(String? uid) async {
     var user_list = [];
 
+    DocumentSnapshot data = await users.doc(uid).get();
+    print(data.data());
+
     // var userData = await users.doc(uid).get();
     // return User.fromMap(userData.data());
-    await users.doc(uid).get().then((DocumentSnapshot documentSnapshot) {
-      if (documentSnapshot.exists) {
-        print('Document data: ${documentSnapshot.data()}');
-        print(documentSnapshot.data().runtimeType);
-        // Map<String, dynamic>.from(documentSnapshot.data());
-        // User? u;
-        // documentSnapshot.data()?.foreach((k, v) => user_list.add(User(
-        //     username: '', name: '', profilepic: '', about: '', email: '')));
-        print(user_list);
+    // await users.doc(uid).get().then((DocumentSnapshot documentSnapshot) {
+    //   if (documentSnapshot.exists) {
+    //     print('Document data: ${documentSnapshot.data()}');
+    //     print(documentSnapshot.data().runtimeType);
+    //     // Map<String, dynamic>.from(documentSnapshot.data());
+    //     // User? u;
+    //     // documentSnapshot.data()?.foreach((k, v) => user_list.add(User(
+    //     //     username: '', name: '', profilepic: '', about: '', email: '')));
+    //     print(user_list);
 
-        // return User.fromMap(documentSnapshot.data());
-        // return documentSnapshot.data();
-      } else {
-        print('Document does not exist on the database');
-      }
-    });
+    //     // return User.fromMap(documentSnapshot.data());
+    //     // return documentSnapshot.data();
+    //   } else {
+    //     print('Document does not exist on the database');
+    //   }
+    // });
     // await users.doc(uid).get().then(
     //   (value) {
     //     Map<String, dynamic> data = value.data() as Map<String, dynamic>;

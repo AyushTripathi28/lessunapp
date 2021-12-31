@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_typing_uninitialized_variables, avoid_print
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lessunapp/services/user_service.dart';
 import 'package:lessunapp/sharedPref/sharedPref.dart';
@@ -14,8 +16,10 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  Map<String, dynamic>? result;
-  String? uid;
+  String? _userName;
+  String? _userEmail;
+  String? _userAbout;
+  String? _userImage;
   @override
   void initState() {
     getUserData();
@@ -24,11 +28,19 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void getUserData() async {
-    uid = await LocalStore.getUid('uid');
-    print(uid);
-    result = await UserService().getUserData(uid);
-    print("result=");
-    print(result);
+    print("----------------Accesing DATA-----------------------------------");
+    User? user = FirebaseAuth.instance.currentUser;
+    var result = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user!.uid)
+        .get();
+    setState(() {
+      _userName = result['name'];
+      _userEmail = result['email'];
+      _userAbout = result['about'];
+      _userImage = result['profilepic'];
+    });
+    print("----------------Accesing DATA-----------------------------------");
   }
 
   @override
@@ -70,18 +82,20 @@ class _ProfilePageState extends State<ProfilePage> {
                 backgroundColor: Colors.orangeAccent,
                 child: CircleAvatar(
                   radius: 70,
-                  backgroundImage: AssetImage('assets/images/profilepic.png'),
+                  backgroundImage: AssetImage(_userImage != ""
+                      ? _userImage!
+                      : "assets/images/profilepic.png"),
                 ),
               ),
               SizedBox(
                 height: 20,
               ),
-              Text("Ayush Tripathi",
+              Text(_userName != "" ? _userName! : "Anonymous User",
                   style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: Colors.black)),
-              Text("ayushtripathi445@gmail.com",
+              Text(_userEmail != "" ? _userEmail! : "No Email",
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w300,
@@ -115,7 +129,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       LimitedBox(
                         maxWidth: size.width * 0.9,
                         child: Text(
-                            "I am in Chandigarh University of Engineering and Technology. I am pursuing my B.Tech in Computer Science and Engineering. I am a self taught programmer and I am always looking for new challenges.",
+                            _userAbout != "" ? _userAbout! : "No About Me",
                             textAlign: TextAlign.justify,
                             style: TextStyle(
                                 fontSize: 16,
