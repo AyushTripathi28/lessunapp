@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:lessunapp/widgets/homefeed_container.dart';
@@ -20,28 +21,30 @@ class FeedPostDetailPage extends StatefulWidget {
     required this.madeat,
     required this.id,
     this.replyCount = 0,
-    this.likeCount = 0,
+    // this.likeCount = 0,
+
     this.ifPined = false,
-    this.ifLiked = false,
+    // this.ifLiked = false,
   }) : super(key: key);
   final String id;
   final String body;
   final String category;
-  final int likes;
+  final List likes;
   final String owner;
   final String owneravatar;
   final String title;
   final String madeat;
   int replyCount;
-  int likeCount;
+  // int likeCount;
   bool ifPined;
-  bool ifLiked;
+  // bool ifLiked;
 
   @override
   State<FeedPostDetailPage> createState() => _FeedPostDetailPageState();
 }
 
 class _FeedPostDetailPageState extends State<FeedPostDetailPage> {
+  User? user = FirebaseAuth.instance.currentUser;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -172,16 +175,24 @@ class _FeedPostDetailPageState extends State<FeedPostDetailPage> {
                       Row(
                         children: [
                           InkWell(
-                            onTap: () {
+                            onTap: () async {
                               setState(() {
-                                widget.ifLiked = !widget.ifLiked;
-                                widget.likeCount = widget.ifLiked
-                                    ? widget.likeCount + 1
-                                    : widget.likeCount - 1;
+                                widget.likes.contains(user!.uid)
+                                    ? widget.likes.remove(user!.uid)
+                                    : widget.likes.add(user!.uid);
                               });
+                              print(widget.likes);
+                              print("working on adding");
+                              await FirebaseFirestore.instance
+                                  .collection("forum")
+                                  .doc(widget.id)
+                                  .update({
+                                "likes": widget.likes,
+                              });
+                              print("added successfull");
                             },
                             child: Icon(
-                              widget.ifLiked
+                              widget.likes.contains(user!.uid)
                                   ? Icons.favorite
                                   : Icons.favorite_border,
                               color: Colors.red,
@@ -191,7 +202,9 @@ class _FeedPostDetailPageState extends State<FeedPostDetailPage> {
                           SizedBox(
                             width: 8,
                           ),
-                          Text(widget.likeCount.toString()),
+                          widget.likes.isEmpty
+                              ? Text("0")
+                              : Text(widget.likes.length.toString()),
                           SizedBox(
                             width: 30,
                           ),

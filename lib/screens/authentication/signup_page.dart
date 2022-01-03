@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:lessunapp/services/auth_service.dart';
-import 'package:lessunapp/sharedPref/sharedPref.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({Key? key}) : super(key: key);
@@ -220,7 +219,7 @@ class _SignupPageState extends State<SignupPage> {
                                     context);
                                 if (result != null) {
                                   print("Sign Up successful");
-                                  LocalStore.setUid(result.uid);
+
                                   FirebaseFirestore.instance
                                       .collection("users")
                                       .doc(result.uid)

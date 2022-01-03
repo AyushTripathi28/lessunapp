@@ -1,6 +1,7 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, avoid_print
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class HomeFeedPost extends StatefulWidget {
@@ -10,25 +11,26 @@ class HomeFeedPost extends StatefulWidget {
     required this.category,
     required this.userImg,
     this.replyCount = 0,
-    this.likeCount = 0,
     this.ifPined = false,
-    this.ifLiked = false,
+    // this.ifLiked = false,
     required this.id,
+    required this.likes,
   }) : super(key: key);
   final String id;
   final String? title;
   final String? category;
   final String userImg;
   final int replyCount;
-  int likeCount;
+  List likes;
+
   bool ifPined;
-  bool ifLiked;
 
   @override
   State<HomeFeedPost> createState() => _HomeFeedPostState();
 }
 
 class _HomeFeedPostState extends State<HomeFeedPost> {
+  User? user = FirebaseAuth.instance.currentUser;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -118,15 +120,6 @@ class _HomeFeedPostState extends State<HomeFeedPost> {
                                                 ),
                                               ],
                                             );
-
-                                            // Container(
-                                            //   //
-                                            //   width: 15,
-                                            //   height: 15,
-                                            //   decoration: BoxDecoration(
-                                            //     color: HexColor(color["color"]),
-                                            //   ),
-                                            // );
                                           } else {
                                             return SizedBox(
                                                 //
@@ -163,16 +156,26 @@ class _HomeFeedPostState extends State<HomeFeedPost> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     InkWell(
-                      onTap: () {
+                      onTap: () async {
                         setState(() {
-                          widget.ifLiked = !widget.ifLiked;
-                          widget.likeCount = widget.ifLiked
-                              ? widget.likeCount + 1
-                              : widget.likeCount - 1;
+                          widget.likes.contains(user!.uid)
+                              ? widget.likes.remove(user!.uid)
+                              : widget.likes.add(user!.uid);
                         });
+                        print(widget.likes);
+                        print("working on adding");
+                        await FirebaseFirestore.instance
+                            .collection("forum")
+                            .doc(widget.id)
+                            .update({
+                          "likes": widget.likes,
+                        });
+                        print("added successfull");
                       },
                       child: Icon(
-                        widget.ifLiked ? Icons.favorite : Icons.favorite_border,
+                        widget.likes.contains(user!.uid)
+                            ? Icons.favorite
+                            : Icons.favorite_border,
                         color: Colors.red,
                         // size: 8,
                       ),
@@ -180,7 +183,9 @@ class _HomeFeedPostState extends State<HomeFeedPost> {
                     SizedBox(
                       width: 8,
                     ),
-                    Text(widget.likeCount.toString()),
+                    widget.likes.isEmpty
+                        ? Text("0")
+                        : Text(widget.likes.length.toString()),
                     SizedBox(
                       width: 30,
                     ),
@@ -270,3 +275,25 @@ class HexColor extends Color {
 
   HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
 }
+
+
+
+ // widget.ifPined = !widget.ifPined;
+                          // FirebaseFirestore.instance
+                          //     .collection("forum")
+                          //     .where("id", isEqualTo: widget.id)
+                          //     .where("likes",
+                          //         arrayContains: widget.id.toString())
+                          //     .get()
+                          //     .then((value) => {
+                          //           value.docs.forEach((doc) {
+                          //             if (doc.id == widget.id) {
+                          //               FirebaseFirestore.instance
+                          //                   .collection("forum")
+                          //                   .doc(doc.id)
+                          //                   .update({
+                          //                 "likes": widget.likes,
+                          //               });
+                          //             }
+                          //           })
+                          //         });

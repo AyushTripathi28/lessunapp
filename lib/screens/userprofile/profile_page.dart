@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lessunapp/services/user_service.dart';
-import 'package:lessunapp/sharedPref/sharedPref.dart';
 
 import 'edit_profile_page.dart';
 
@@ -16,10 +15,10 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  String? _userName;
-  String? _userEmail;
-  String? _userAbout;
-  String? _userImage;
+  String _userName = "";
+  String _userEmail = "";
+  String _userAbout = "";
+  String _userImage = "";
   @override
   void initState() {
     getUserData();
@@ -30,17 +29,20 @@ class _ProfilePageState extends State<ProfilePage> {
   void getUserData() async {
     print("----------------Accesing DATA-----------------------------------");
     User? user = FirebaseAuth.instance.currentUser;
+    print(user!.uid);
     var result = await FirebaseFirestore.instance
         .collection('users')
-        .doc(user!.uid)
+        .doc(user.uid)
         .get();
+
     setState(() {
-      _userName = result['name'];
-      _userEmail = result['email'];
-      _userAbout = result['about'];
-      _userImage = result['profilepic'];
+      _userName = result["name"].toString();
+      _userEmail = result["email"].toString();
+      _userAbout = result["about"].toString();
+      _userImage = result["profilepic"].toString();
     });
-    print("----------------Accesing DATA-----------------------------------");
+    print({_userName});
+    print("---------------- DATA Access-----------------------------------");
   }
 
   @override
@@ -82,20 +84,25 @@ class _ProfilePageState extends State<ProfilePage> {
                 backgroundColor: Colors.orangeAccent,
                 child: CircleAvatar(
                   radius: 70,
-                  backgroundImage: AssetImage(_userImage != ""
-                      ? _userImage!
-                      : "assets/images/profilepic.png"),
+                  backgroundImage: AssetImage(
+                    "assets/images/profilepic.png",
+                    // != ""
+                    //     ? _userImage
+                    //     : "assets/images/profilepic.png",
+                  ),
                 ),
               ),
               SizedBox(
                 height: 20,
               ),
-              Text(_userName != "" ? _userName! : "Anonymous User",
+              Text(_userName,
+                  // != "" ? _userName! : "Anonymous User",
                   style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: Colors.black)),
-              Text(_userEmail != "" ? _userEmail! : "No Email",
+              Text(_userEmail,
+                  //  != "" ? _userEmail! : "No Email",
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w300,
@@ -128,8 +135,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       LimitedBox(
                         maxWidth: size.width * 0.9,
-                        child: Text(
-                            _userAbout != "" ? _userAbout! : "No About Me",
+                        child: Text(_userAbout,
+                            //  != "" ? _userAbout! : "No About Me",
                             textAlign: TextAlign.justify,
                             style: TextStyle(
                                 fontSize: 16,

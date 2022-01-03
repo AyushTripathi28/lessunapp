@@ -1,12 +1,10 @@
 // ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors, avoid_print
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lessunapp/screens/home/feedpostdetail.dart';
-import 'package:lessunapp/screens/userprofile/profile_page.dart';
 import 'package:lessunapp/services/auth_service.dart';
-import 'package:lessunapp/sharedPref/sharedPref.dart';
 import 'package:lessunapp/widgets/homefeed_container.dart';
 
 class HomePage extends StatefulWidget {
@@ -21,6 +19,7 @@ class _HomePageState extends State<HomePage> {
   String searchFilter = "";
   TextEditingController searchController = TextEditingController();
   bool? loading = false;
+  User? user = FirebaseAuth.instance.currentUser;
 
   @override
   void initState() {
@@ -69,8 +68,8 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: Icon(Icons.person, color: Colors.black),
             onPressed: () async {
-              String? uid = await LocalStore.getUid("uid");
-              print(uid);
+              // String? uid = await LocalStore.getUid("uid");
+              // print(uid);
 
               Navigator.pushNamed(context, "/profilePage");
             },
@@ -168,6 +167,7 @@ class _HomePageState extends State<HomePage> {
                                             16, 0, 16, 0),
                                         child: GestureDetector(
                                           onTap: () {
+                                            print(forum["likes"]);
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
@@ -183,9 +183,9 @@ class _HomePageState extends State<HomePage> {
                                                   madeat: forum["madeat"],
                                                   id: forum.id,
                                                   replyCount: 0,
-                                                  ifLiked: false,
+                                                  // ifLiked: false,
                                                   ifPined: forum["pinned"],
-                                                  likeCount: 0,
+                                                  // likeCount: 0,
                                                 ),
                                               ),
                                             );
@@ -196,6 +196,7 @@ class _HomePageState extends State<HomePage> {
                                             category: forum["category"],
                                             userImg: "",
                                             ifPined: forum["pinned"],
+                                            likes: forum["likes"],
                                           ),
                                         ),
                                       );
