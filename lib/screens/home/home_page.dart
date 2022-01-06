@@ -182,7 +182,7 @@ class _HomePageState extends State<HomePage> {
                                                 title: forum["title"],
                                                 madeat: forum["madeat"],
                                                 id: forum.id,
-                                                replyCount: 0,
+                                                replyCount: forum["replyCount"],
                                                 // ifLiked: false,
                                                 ifPined: forum["pinned"],
                                                 // likeCount: 0,
@@ -197,6 +197,7 @@ class _HomePageState extends State<HomePage> {
                                           userImg: "",
                                           ifPined: forum["pinned"],
                                           likes: forum["likes"],
+                                          replyCount: forum["replyCount"],
                                         ),
                                       ),
                                     );

@@ -20,7 +20,7 @@ class HomeFeedPost extends StatefulWidget {
   final String? title;
   final String? category;
   final String userImg;
-  final int replyCount;
+  int replyCount;
   List likes;
 
   bool ifPined;
@@ -31,6 +31,33 @@ class HomeFeedPost extends StatefulWidget {
 
 class _HomeFeedPostState extends State<HomeFeedPost> {
   User? user = FirebaseAuth.instance.currentUser;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    // getUserData();
+    super.initState();
+  }
+
+  // void getUserData() async {
+  //   print("----------------Accesing DATA-----------------------------------");
+  //   User? user = FirebaseAuth.instance.currentUser;
+  //   print(user!.uid);
+  //   var result = await FirebaseFirestore.instance
+  //       .collection('postReply')
+  //       .doc(widget.id)
+  //       .collection("reply")
+  //       .get();
+  //   // .get();
+  //   print(result.docs.length);
+
+  //   setState(() {
+  //     widget.replyCount = result.docs.length;
+  //   });
+  //   // print();
+  //   print("---------------- DATA Access-----------------------------------");
+  // }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;

@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:lessunapp/screens/home/postReplyContainer.dart';
 import 'package:lessunapp/widgets/homefeed_container.dart';
 import 'package:zefyrka/zefyrka.dart';
 
@@ -330,6 +331,11 @@ class _FeedPostDetailPageState extends State<FeedPostDetailPage> {
                   TextField(
                     controller: replyController,
                     decoration: InputDecoration(
+                      hintText: "Write a reply",
+                      hintStyle: TextStyle(
+                        fontSize: 15,
+                        color: Colors.grey,
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -383,20 +389,20 @@ class _FeedPostDetailPageState extends State<FeedPostDetailPage> {
               width: size.width,
               margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
               decoration: BoxDecoration(
-                color: Colors.white,
+                // color: Colors.,
                 borderRadius: BorderRadius.all(Radius.circular(10)),
                 // ignore: prefer_const_literals_to_create_immutables
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey,
-                    blurRadius: 0.0,
-                    spreadRadius: 0.0,
-                    offset: Offset(
-                      0.0, // horizontal, move right 10
-                      10.0, // vertical, move down 10
-                    ),
-                  )
-                ],
+                // boxShadow: [
+                //   BoxShadow(
+                //     color: Colors.grey,
+                //     blurRadius: 0.0,
+                //     spreadRadius: 0.0,
+                //     offset: Offset(
+                //       0.0, // horizontal, move right 10
+                //       10.0, // vertical, move down 10
+                //     ),
+                //   )
+                // ],
               ),
               child: StreamBuilder(
                 stream: FirebaseFirestore.instance
@@ -414,9 +420,10 @@ class _FeedPostDetailPageState extends State<FeedPostDetailPage> {
                     return ListView(
                       scrollDirection: Axis.vertical,
                       children: snapshot.data!.docs.map((reply) {
-                        return Container(
-                          padding: EdgeInsets.all(8),
-                          child: Text(reply.id),
+                        return PostReplyContainer(
+                          replyContent: reply["replyContent"],
+                          replyById: reply["replyById"],
+                          replyDate: reply["replyDateTime"],
                         );
                       }).toList(),
                     );
