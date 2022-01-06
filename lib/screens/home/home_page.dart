@@ -157,53 +157,54 @@ class _HomePageState extends State<HomePage> {
                           } else {
                             return Expanded(
                               child: ListView(
-                                  scrollDirection: Axis.vertical,
-                                  children: snapshot.data!.docs.map((forum) {
-                                    if (forum["title"]
-                                        .toUpperCase()
-                                        .contains(searchFilter.toUpperCase())) {
-                                      return Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            16, 0, 16, 0),
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            print(forum["likes"]);
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    FeedPostDetailPage(
-                                                  body: forum["body"],
-                                                  category: forum["category"],
-                                                  likes: forum["likes"],
-                                                  owner: forum["owner"],
-                                                  owneravatar:
-                                                      forum["owneravatar"],
-                                                  title: forum["title"],
-                                                  madeat: forum["madeat"],
-                                                  id: forum.id,
-                                                  replyCount: 0,
-                                                  // ifLiked: false,
-                                                  ifPined: forum["pinned"],
-                                                  // likeCount: 0,
-                                                ),
+                                scrollDirection: Axis.vertical,
+                                children: snapshot.data!.docs.map((forum) {
+                                  if (forum["title"]
+                                      .toUpperCase()
+                                      .contains(searchFilter.toUpperCase())) {
+                                    return Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          16, 0, 16, 0),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          print(forum["likes"]);
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  FeedPostDetailPage(
+                                                body: forum["body"],
+                                                category: forum["category"],
+                                                likes: forum["likes"],
+                                                owner: forum["owner"],
+                                                owneravatar:
+                                                    forum["owneravatar"],
+                                                title: forum["title"],
+                                                madeat: forum["madeat"],
+                                                id: forum.id,
+                                                replyCount: 0,
+                                                // ifLiked: false,
+                                                ifPined: forum["pinned"],
+                                                // likeCount: 0,
                                               ),
-                                            );
-                                          },
-                                          child: HomeFeedPost(
-                                            id: forum.id,
-                                            title: forum["title"],
-                                            category: forum["category"],
-                                            userImg: "",
-                                            ifPined: forum["pinned"],
-                                            likes: forum["likes"],
-                                          ),
+                                            ),
+                                          );
+                                        },
+                                        child: HomeFeedPost(
+                                          id: forum.id,
+                                          title: forum["title"],
+                                          category: forum["category"],
+                                          userImg: "",
+                                          ifPined: forum["pinned"],
+                                          likes: forum["likes"],
                                         ),
-                                      );
-                                    } else {
-                                      return Center();
-                                    }
-                                  }).toList()),
+                                      ),
+                                    );
+                                  } else {
+                                    return Center();
+                                  }
+                                }).toList(),
+                              ),
                             );
                           }
                         },

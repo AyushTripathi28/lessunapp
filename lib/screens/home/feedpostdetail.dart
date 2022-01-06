@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, avoid_print
 
 import 'dart:convert';
 
@@ -44,6 +44,7 @@ class FeedPostDetailPage extends StatefulWidget {
 }
 
 class _FeedPostDetailPageState extends State<FeedPostDetailPage> {
+  TextEditingController replyController = TextEditingController();
   User? user = FirebaseAuth.instance.currentUser;
   @override
   Widget build(BuildContext context) {
@@ -302,6 +303,81 @@ class _FeedPostDetailPageState extends State<FeedPostDetailPage> {
             ),
           ),
           // SizedBox(height: 10),
+          Container(
+            width: size.width,
+            margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              // ignore: prefer_const_literals_to_create_immutables
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey,
+                  blurRadius: 2.0,
+                  spreadRadius: 0.0,
+                  offset: Offset(
+                    0.0, // horizontal, move right 10
+                    0.0, // vertical, move down 10
+                  ),
+                )
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                // ignore: prefer_const_literals_to_create_immutables
+                children: [
+                  TextField(
+                    controller: replyController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    maxLines: null,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ElevatedButton(
+                          onPressed: () async {
+                            print(replyController.text);
+                            if (replyController.text.isEmpty) {
+                              print("empty");
+                            } else {
+                              print("not empty");
+
+                              setState(() {
+                                widget.replyCount++;
+                              });
+                              print(replyController.text);
+                              print("object");
+                              await FirebaseFirestore.instance
+                                  .collection("forum")
+                                  .doc(widget.id)
+                                  .update({
+                                "replyCount": widget.replyCount,
+                              });
+                              await FirebaseFirestore.instance
+                                  .collection("postReply")
+                                  .doc(widget.id)
+                                  .collection("reply")
+                                  .add({
+                                "replyContent": replyController.text,
+                                "replyById": user!.uid,
+                                "replyDateTime": DateTime.now(),
+                              });
+                              replyController.clear();
+                            }
+                          },
+                          child: Text("Reply")),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+
           Expanded(
             child: Container(
               width: size.width,
@@ -322,8 +398,30 @@ class _FeedPostDetailPageState extends State<FeedPostDetailPage> {
                   )
                 ],
               ),
-              child: Center(
-                child: Text("Reply shown here"),
+              child: StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection("postReply")
+                    .doc(widget.id)
+                    .collection("reply")
+                    .orderBy("replyDateTime", descending: true)
+                    .snapshots(),
+                builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(
+                      child: Text("Loading"),
+                    );
+                  } else {
+                    return ListView(
+                      scrollDirection: Axis.vertical,
+                      children: snapshot.data!.docs.map((reply) {
+                        return Container(
+                          padding: EdgeInsets.all(8),
+                          child: Text(reply.id),
+                        );
+                      }).toList(),
+                    );
+                  }
+                },
               ),
             ),
           )
