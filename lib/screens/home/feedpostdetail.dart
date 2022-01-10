@@ -16,8 +16,7 @@ class FeedPostDetailPage extends StatefulWidget {
     required this.body,
     required this.category,
     required this.likes,
-    required this.owner,
-    required this.owneravatar,
+    required this.userId,
     required this.title,
     required this.madeat,
     required this.id,
@@ -31,8 +30,7 @@ class FeedPostDetailPage extends StatefulWidget {
   final String body;
   final String category;
   final List likes;
-  final String owner;
-  final String owneravatar;
+  final String userId;
   final String title;
   final String madeat;
   int replyCount;
@@ -47,6 +45,34 @@ class FeedPostDetailPage extends StatefulWidget {
 class _FeedPostDetailPageState extends State<FeedPostDetailPage> {
   TextEditingController replyController = TextEditingController();
   User? user = FirebaseAuth.instance.currentUser;
+  String? img;
+  String? userName;
+  @override
+  void initState() {
+    // TODO: implement initState
+    getReplyData();
+    super.initState();
+  }
+
+  void getReplyData() async {
+    print("----------------Accesing DATA-----------------------------------");
+    // User? user = FirebaseAuth.instance.currentUser;
+    // print(user!.uid);
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.userId)
+        .get()
+        .then((value) => {
+              setState(() {
+                img = value["profilepic"];
+                userName = value["name"];
+              })
+            });
+
+    // print({_userName});
+    print("---------------- DATA Access-----------------------------------");
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -140,7 +166,7 @@ class _FeedPostDetailPageState extends State<FeedPostDetailPage> {
                                     // ignore: prefer_const_literals_to_create_immutables
                                     children: [
                                       TextSpan(
-                                        text: widget.owner,
+                                        text: userName,
                                         style: TextStyle(
                                           fontSize: 15,
                                           fontWeight: FontWeight.bold,

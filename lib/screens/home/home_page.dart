@@ -176,9 +176,9 @@ class _HomePageState extends State<HomePage> {
                                                 body: forum["body"],
                                                 category: forum["category"],
                                                 likes: forum["likes"],
-                                                owner: forum["owner"],
-                                                owneravatar:
-                                                    forum["owneravatar"],
+                                                userId: forum["byUserId"],
+                                                // owneravatar:
+                                                //     forum["owneravatar"],
                                                 title: forum["title"],
                                                 madeat: forum["madeat"],
                                                 id: forum.id,
@@ -194,7 +194,7 @@ class _HomePageState extends State<HomePage> {
                                           id: forum.id,
                                           title: forum["title"],
                                           category: forum["category"],
-                                          userImg: "",
+                                          userId: forum["byUserId"],
                                           ifPined: forum["pinned"],
                                           likes: forum["likes"],
                                           replyCount: forum["replyCount"],

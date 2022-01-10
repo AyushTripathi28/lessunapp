@@ -18,7 +18,7 @@ class PostReplyContainer extends StatefulWidget {
 }
 
 class _PostReplyContainerState extends State<PostReplyContainer> {
-  String? img;
+  String img = "";
   String? name;
 
   @override
@@ -81,7 +81,7 @@ class _PostReplyContainerState extends State<PostReplyContainer> {
               children: [
                 CircleAvatar(
                   radius: 20,
-                  backgroundImage: AssetImage('assets/images/profilepic.png'),
+                  backgroundImage: NetworkImage(img),
                 ),
                 SizedBox(
                   width: 10,

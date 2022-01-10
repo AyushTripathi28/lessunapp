@@ -9,7 +9,7 @@ class HomeFeedPost extends StatefulWidget {
     Key? key,
     required this.title,
     required this.category,
-    required this.userImg,
+    required this.userId,
     this.replyCount = 0,
     this.ifPined = false,
     // this.ifLiked = false,
@@ -19,7 +19,7 @@ class HomeFeedPost extends StatefulWidget {
   final String id;
   final String? title;
   final String? category;
-  final String userImg;
+  final String? userId;
   int replyCount;
   List likes;
 
@@ -31,12 +31,31 @@ class HomeFeedPost extends StatefulWidget {
 
 class _HomeFeedPostState extends State<HomeFeedPost> {
   User? user = FirebaseAuth.instance.currentUser;
+  String userImg = "";
 
   @override
   void initState() {
     // TODO: implement initState
-    // getUserData();
+    getUserPhotoData();
     super.initState();
+  }
+
+  void getUserPhotoData() async {
+    print("----------------Accesing DATA-----------------------------------");
+    // User? user = FirebaseAuth.instance.currentUser;
+    // print(user!.uid);
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.userId)
+        .get()
+        .then((value) => {
+              setState(() {
+                userImg = value["profilepic"];
+              })
+            });
+
+    // print({_userName});
+    print("---------------- DATA Access-----------------------------------");
   }
 
   // void getUserData() async {
@@ -82,8 +101,7 @@ class _HomeFeedPostState extends State<HomeFeedPost> {
                       padding: const EdgeInsets.only(top: 8.0, left: 8),
                       child: CircleAvatar(
                         radius: 25,
-                        backgroundImage:
-                            AssetImage('assets/images/profilepic.png'),
+                        backgroundImage: NetworkImage(userImg),
                       ),
                     ),
                     SizedBox(

@@ -26,7 +26,10 @@ class ProfilePhoto extends StatelessWidget {
           Positioned(
             bottom: 0,
             right: 4,
-            child: buildEditIcon(color),
+            child: InkWell(
+              onTap: onClicked,
+              child: buildEditIcon(color),
+            ),
           ),
         ],
       ),
@@ -34,7 +37,7 @@ class ProfilePhoto extends StatelessWidget {
   }
 
   Widget buildImage() {
-    final image = AssetImage(imagePath);
+    final image = NetworkImage(imagePath);
 
     return ClipOval(
       child: Material(
@@ -44,7 +47,7 @@ class ProfilePhoto extends StatelessWidget {
           fit: BoxFit.cover,
           width: 128,
           height: 128,
-          child: InkWell(onTap: onClicked),
+          // child: InkWell(onTap: onClicked),
         ),
       ),
     );

@@ -1,8 +1,12 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, avoid_print
+
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:lessunapp/screens/userprofile/profile_page.dart';
 import 'package:lessunapp/widgets/profile_photo.dart';
 import 'package:lessunapp/widgets/textfield.dart';
@@ -16,10 +20,12 @@ class EditProfilePage extends StatefulWidget {
 
 class _EditProfilePageState extends State<EditProfilePage> {
   String? _userName;
-  String? _userEmail;
+  // String? _userEmail;
   String? _userAbout;
   String? _userImage;
   TextEditingController? _aboutController = TextEditingController();
+  TextEditingController? _nameController = TextEditingController();
+  // TextEditingController? _emailController = TextEditingController();
   User? user = FirebaseAuth.instance.currentUser;
   @override
   void initState() {
@@ -30,14 +36,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   setUserData() async {
     print(_userName);
-    print(_userEmail);
+    // print(_userEmail);
     print(_aboutController!.text);
     print(_userImage);
     final DocumentReference documentReference =
         await FirebaseFirestore.instance.collection('users').doc(user!.uid);
     documentReference.update({
-      'name': _userName,
-      'email': _userEmail,
+      'name': _nameController!.text,
+      // 'email': _userEmail,
       'about': _aboutController!.text,
       'profilepic': _userImage,
     });
@@ -51,12 +57,63 @@ class _EditProfilePageState extends State<EditProfilePage> {
         .doc(user!.uid)
         .get();
     setState(() {
-      _userName = result['name'];
-      _userEmail = result['email'];
+      // _userName = result['name'];
+      // _userEmail = result['email'];
       _aboutController = TextEditingController(text: result['about']);
+      _nameController = TextEditingController(text: result['name']);
       _userImage = result['profilepic'];
     });
     print("----------------Accesing DATA-----------------------------------");
+  }
+
+  File? image;
+
+  Future pickImage() async {
+    try {
+      print("object");
+      final image = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 85,
+      );
+      print("object1hkbfluiKHFnaslikfh");
+      print(image!.path);
+      if (image == null) return;
+      final imageTemporary = File(image.path);
+      setState(() {
+        this.image = imageTemporary;
+        uploadImagetFirebase(this.image);
+      });
+    } catch (e) {
+      print('Failed to pick image: $e');
+    }
+  }
+
+  uploadImagetFirebase(File? file) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    var userId = user!.uid;
+    await FirebaseStorage.instance
+        .ref("user/profile/$userId")
+        .putFile(file!)
+        .then((taskSnapshot) {
+      print("task done");
+
+// download url when it is uploaded
+      if (taskSnapshot.state == TaskState.success) {
+        FirebaseStorage.instance
+            .ref("user/profile/$userId")
+            .getDownloadURL()
+            .then((url) {
+          print("Here is the URL of Image $url");
+          setState(() {
+            _userImage = url;
+            print(_userImage);
+          });
+          return url;
+        }).catchError((onError) {
+          print("Got Error $onError");
+        });
+      }
+    });
   }
 
   @override
@@ -73,14 +130,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
             Icons.arrow_back_ios_new_sharp,
             color: Colors.black,
           ),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () =>
+              Navigator.pushReplacementNamed(context, "/profilePage"),
         ),
         actions: [
           IconButton(
             icon: Icon(Icons.save, color: Colors.black),
             onPressed: () async {
               await setUserData();
-              // Navigator.pop(context);
+              // Navigator.popAndPushNamed(context, routeName)
+              Navigator.pushReplacementNamed(context, "/profilePage");
             },
           ),
         ],
@@ -90,30 +149,32 @@ class _EditProfilePageState extends State<EditProfilePage> {
         physics: BouncingScrollPhysics(),
         children: [
           ProfilePhoto(
-            imagePath:
-                _userImage != "" ? _userImage! : "assets/images/profilepic.png",
+            imagePath: _userImage != null ? _userImage! : "",
             isEdit: true,
-            onClicked: () async {},
+            onClicked: () {
+              print("clicked");
+              pickImage();
+            },
           ),
           const SizedBox(height: 24),
-          TextFieldWidget(
-            label: 'Full Name',
-            text: _userName != "" ? _userName! : "",
-            onChanged: (name) {},
+          Text(
+            'Full Name',
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+          TextField(
+            controller: _nameController,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            maxLines: 1,
           ),
           SizedBox(height: 24),
-          TextFieldWidget(
-            label: 'Email',
-            text: _userEmail != "" ? _userEmail! : "",
-            onChanged: (email) {},
+          Text(
+            'About',
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
-          const SizedBox(height: 24),
-          // TextFieldWidget(
-          //   label: 'About',
-          //   text: _userAbout != "" ? _userAbout! : "",
-          //   maxLines: 5,
-          //   onChanged: (about) {},
-          // ),
           TextField(
             controller: _aboutController,
             decoration: InputDecoration(
@@ -128,3 +189,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 }
+
+     // TextFieldWidget(
+          //   label: 'Full Name',
+          //   text: _userName != "" ? _userName! : "",
+          //   onChanged: (name) {},
+          // ),
+
+
+          // const SizedBox(height: 24),
+          // TextFieldWidget(
+          //   label: 'About',
+          //   text: _userAbout != "" ? _userAbout! : "",
+          //   maxLines: 5,
+          //   onChanged: (about) {},
+          // ),

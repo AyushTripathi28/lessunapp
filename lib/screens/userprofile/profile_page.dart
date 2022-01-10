@@ -84,11 +84,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 backgroundColor: Colors.orangeAccent,
                 child: CircleAvatar(
                   radius: 70,
-                  backgroundImage: AssetImage(
-                    "assets/images/profilepic.png",
-                    // != ""
-                    //     ? _userImage
-                    //     : "assets/images/profilepic.png",
+                  backgroundImage: NetworkImage(
+                    _userImage,
                   ),
                 ),
               ),
