@@ -7,14 +7,15 @@ import 'package:lessunapp/services/user_service.dart';
 
 import 'edit_profile_page.dart';
 
-class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+class OtherUserProfilePage extends StatefulWidget {
+  const OtherUserProfilePage({Key? key, this.uid}) : super(key: key);
+  final String? uid;
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  State<OtherUserProfilePage> createState() => _OtherUserProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _OtherUserProfilePageState extends State<OtherUserProfilePage> {
   String _userName = "";
   String _userEmail = "";
   String _userAbout = "";
@@ -22,6 +23,11 @@ class _ProfilePageState extends State<ProfilePage> {
   List _userFollowers = [];
   List _userFollowing = [];
   List _userPosts = [];
+  List _userBlock = [];
+  bool _isUserBlock = false;
+
+  User? user = FirebaseAuth.instance.currentUser;
+  // print(widget.uid);
   @override
   void initState() {
     getUserData();
@@ -29,13 +35,45 @@ class _ProfilePageState extends State<ProfilePage> {
     super.initState();
   }
 
+  // checkIfFollowing()  {
+  //   User? user = FirebaseAuth.instance.currentUser;
+  //   print(widget.uid);
+
+  //   return _u;
+  // }
+
   void getUserData() async {
     print("----------------Accesing DATA-----------------------------------");
-    User? user = FirebaseAuth.instance.currentUser;
-    print(user!.uid);
+
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(user!.uid)
+        .get()
+        .then((value) {
+      List blkList = value["blockUser"];
+      print(blkList);
+      if (blkList.contains(widget.uid)) {
+        setState(() {
+          _isUserBlock = true;
+        });
+      }
+
+      print(blkList.contains(widget.uid));
+    });
+    // if (value["blockUser"].map != null) {
+    //   if (value["block"].contains(widget.uid)) {
+    //     return true;
+    //   } else {
+    //     return false;
+    //   }
+    // } else {
+    //   return false;
+    // }
+    // });
+
     var result = await FirebaseFirestore.instance
         .collection('users')
-        .doc(user.uid)
+        .doc(widget.uid)
         .get();
 
     setState(() {
@@ -70,13 +108,21 @@ class _ProfilePageState extends State<ProfilePage> {
             onPressed: () => Navigator.pop(context),
           ),
           actions: [
-            IconButton(
-              icon: Icon(Icons.edit, color: Colors.black),
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => EditProfilePage()));
-              },
-            ),
+            PopupMenuButton(
+                onSelected: (item) => onSelected(context, item as int),
+                itemBuilder: (context) => [
+                      PopupMenuItem(
+                        child: Text(
+                          _isUserBlock ? "Unblock User" : "Block User",
+                          style: TextStyle(fontSize: 13),
+                        ),
+                        value: 0,
+                      ),
+                    ])
+            // IconButton(
+            //   icon: Icon(Icons.more_vert, color: Colors.black),
+            //   onPressed: () {},
+            // ),
           ],
         ),
         backgroundColor: Color(0xffEDF1FE),
@@ -112,6 +158,52 @@ class _ProfilePageState extends State<ProfilePage> {
                       fontSize: 16,
                       fontWeight: FontWeight.w300,
                       color: Colors.black)),
+              // if (user)
+              _isUserBlock
+                  ? Text("First unblock user")
+                  : _userFollowers.contains(user!.uid)
+                      ? ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              _userFollowers.remove(user!.uid);
+                            });
+                            FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(widget.uid)
+                                .update({
+                              'followers': FieldValue.arrayRemove([user!.uid])
+                            });
+                            FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(user!.uid)
+                                .update({
+                              'followings': FieldValue.arrayRemove([user!.uid])
+                            });
+                          },
+                          child: Text("Unfollow"),
+                        )
+                      : ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              _userFollowers.add(user!.uid);
+                            });
+
+                            FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(widget.uid)
+                                .update({
+                              'followers': FieldValue.arrayUnion([user!.uid])
+                            });
+                            FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(user!.uid)
+                                .update({
+                              'followings': FieldValue.arrayUnion([user!.uid])
+                            });
+                          },
+                          child: Text("Follow"),
+                        ),
+
               SizedBox(
                 height: 10,
               ),
@@ -229,5 +321,38 @@ class _ProfilePageState extends State<ProfilePage> {
             ],
           ),
         ));
+  }
+
+  void onSelected(BuildContext context, int item) {
+    switch (item) {
+      case 0:
+        if (!_isUserBlock) {
+          FirebaseFirestore.instance.collection('users').doc(user!.uid).update({
+            'blockUser': FieldValue.arrayUnion([widget.uid])
+          });
+          setState(() {
+            _userFollowers.remove(user!.uid);
+            _isUserBlock = true;
+          });
+          FirebaseFirestore.instance
+              .collection('users')
+              .doc(widget.uid)
+              .update({
+            'followers': FieldValue.arrayRemove([user!.uid])
+          });
+          FirebaseFirestore.instance.collection('users').doc(user!.uid).update({
+            'followings': FieldValue.arrayRemove([user!.uid])
+          });
+//        Navigator.push(
+        } else {
+          FirebaseFirestore.instance.collection('users').doc(user!.uid).update({
+            'blockUser': FieldValue.arrayRemove([widget.uid])
+          });
+          setState(() {
+            _isUserBlock = false;
+          });
+        }
+        break;
+    }
   }
 }

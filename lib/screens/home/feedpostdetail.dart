@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:lessunapp/screens/home/postReplyContainer.dart';
+import 'package:lessunapp/screens/userprofile/other_user_profile_page.dart';
 import 'package:lessunapp/widgets/homefeed_container.dart';
 import 'package:zefyrka/zefyrka.dart';
 
@@ -167,6 +168,24 @@ class _FeedPostDetailPageState extends State<FeedPostDetailPage> {
                                     children: [
                                       TextSpan(
                                         text: userName,
+                                        recognizer: TapGestureRecognizer()
+                                          ..onTap = () {
+                                            print(
+                                                "objectklrbfkbfsbahsfbds gfkhjabsdfgka");
+                                            print(widget.userId);
+                                            user!.uid != widget.userId
+                                                ? Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          OtherUserProfilePage(
+                                                        uid: widget.userId,
+                                                      ),
+                                                    ),
+                                                  )
+                                                : Navigator.pushNamed(
+                                                    context, "/profilePage");
+                                          },
                                         style: TextStyle(
                                           fontSize: 15,
                                           fontWeight: FontWeight.bold,
