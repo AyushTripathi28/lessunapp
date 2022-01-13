@@ -17,6 +17,8 @@ class _SignupPageState extends State<SignupPage> {
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
   bool? acceptTerms = false;
   bool? loading = false;
+  bool? _isObscure = true;
+  bool? _isObscureConfirm = true;
 
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -143,9 +145,19 @@ class _SignupPageState extends State<SignupPage> {
                       left: 15.0, right: 15.0, top: 15, bottom: 0),
                   child: TextFormField(
                       controller: passwordController,
-                      obscureText: true,
+                      obscureText: _isObscure!,
                       decoration: InputDecoration(
                           border: OutlineInputBorder(),
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                _isObscure = !_isObscure!;
+                              });
+                            },
+                            icon: Icon(_isObscure!
+                                ? Icons.visibility
+                                : Icons.visibility_off),
+                          ),
                           labelText: 'Password',
                           hintText: 'Enter secure password'),
                       validator: MultiValidator([
@@ -165,9 +177,19 @@ class _SignupPageState extends State<SignupPage> {
                       left: 15.0, right: 15.0, top: 15, bottom: 0),
                   child: TextFormField(
                     controller: confirmPasswordController,
-                    obscureText: true,
+                    obscureText: _isObscureConfirm!,
                     decoration: InputDecoration(
                         border: OutlineInputBorder(),
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _isObscureConfirm = !_isObscureConfirm!;
+                            });
+                          },
+                          icon: Icon(_isObscureConfirm!
+                              ? Icons.visibility
+                              : Icons.visibility_off),
+                        ),
                         labelText: 'Confirm Password',
                         hintText: 'Password should be same as above'),
                     validator: (val) =>
@@ -258,7 +280,7 @@ class _SignupPageState extends State<SignupPage> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Navigator.of(context).pushNamed('/loginPage');
+                    Navigator.of(context).pushReplacementNamed('/loginPage');
                   },
                   child: Text(
                     'Already have an account? Login',

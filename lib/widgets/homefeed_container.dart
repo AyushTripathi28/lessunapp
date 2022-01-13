@@ -101,7 +101,11 @@ class _HomeFeedPostState extends State<HomeFeedPost> {
                       padding: const EdgeInsets.only(top: 8.0, left: 8),
                       child: CircleAvatar(
                         radius: 25,
-                        backgroundImage: NetworkImage(userImg),
+                        backgroundImage: userImg.isNotEmpty
+                            ? NetworkImage(
+                                userImg,
+                              )
+                            : null,
                       ),
                     ),
                     SizedBox(

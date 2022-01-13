@@ -10,6 +10,7 @@ import 'package:lessunapp/screens/userprofile/other_user_profile_page.dart';
 import 'package:lessunapp/screens/userprofile/profile_page.dart';
 import 'package:lessunapp/services/auth_service.dart';
 
+import 'screens/authentication/forget_password_page.dart';
 import 'screens/home/createPost.dart';
 import 'screens/home/filterpage.dart';
 
@@ -34,6 +35,8 @@ class MyApp extends StatelessWidget {
         '/authPage': (BuildContext context) => const AuthPage(),
         '/loginPage': (BuildContext context) => const LoginPage(),
         '/signupPage': (BuildContext context) => const SignupPage(),
+        '/forgetpasswordPage': (BuildContext context) =>
+            const ForgetPasswordPage(),
         '/homePage': (BuildContext context) => const HomePage(),
         '/profilePage': (BuildContext context) => const ProfilePage(),
         '/otherUserProfilePage': (BuildContext context) =>

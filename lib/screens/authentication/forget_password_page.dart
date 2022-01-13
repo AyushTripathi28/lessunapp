@@ -1,24 +1,24 @@
 // ignore_for_file: prefer_const_constructors, avoid_print
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:lessunapp/screens/authentication/signup_page.dart';
 import 'package:lessunapp/services/auth_service.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class ForgetPasswordPage extends StatefulWidget {
+  const ForgetPasswordPage({Key? key}) : super(key: key);
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  _ForgetPasswordPageState createState() => _ForgetPasswordPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
   bool? loading = false;
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  bool? _isObscure = true;
 
   String validatePassword(String value) {
     if (value.isEmpty) {
@@ -31,6 +31,72 @@ class _LoginPageState extends State<LoginPage> {
     return "";
   }
 
+  checkDatabaseForEmail() async {
+    await FirebaseFirestore.instance
+        .collection("users")
+        .where("email", isEqualTo: emailController.text)
+        .get()
+        .then((value) {
+      if (value.docs.isNotEmpty) {
+        resetPassword();
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Reset Email Sent"),
+              content: Text(
+                  "This email is sent to your email address. Please check your email and follow the instructions to reset your password"),
+              actions: <Widget>[
+                TextButton(
+                  child: Text("OK"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        print("object not available;");
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Account not found"),
+              content: Text(
+                  "This email is not registered with Lessun, If you have not registered yet, please sign up!"),
+              actions: <Widget>[
+                TextButton(
+                  child: Text("Ok"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  child: Text("Create a new account"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+
+                    Navigator.of(context).pushReplacementNamed('/signupPage');
+                  },
+                )
+              ],
+            );
+          },
+        );
+      }
+    });
+  }
+
+  resetPassword() async {
+    await FirebaseAuth.instance
+        .sendPasswordResetEmail(email: emailController.text);
+    // Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -38,7 +104,7 @@ class _LoginPageState extends State<LoginPage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(
-          "Login To Lessun",
+          "Forget Password",
           style: TextStyle(
             color: Colors.black,
           ),
@@ -91,49 +157,6 @@ class _LoginPageState extends State<LoginPage> {
                         EmailValidator(errorText: "Enter valid email id"),
                       ])),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 15.0, right: 15.0, top: 15, bottom: 0),
-                  child: TextFormField(
-                    controller: passwordController,
-                    obscureText: _isObscure!,
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        suffixIcon: IconButton(
-                          onPressed: () {
-                            setState(() {
-                              _isObscure = !_isObscure!;
-                            });
-                          },
-                          icon: Icon(_isObscure!
-                              ? Icons.visibility
-                              : Icons.visibility_off),
-                        ),
-                        labelText: 'Password',
-                        hintText: 'Enter password'),
-                    validator: RequiredValidator(errorText: "* Required"),
-                    //validatePassword,        //Function to check validation
-                  ),
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.only(left: 15.0, right: 15.0, top: 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context)
-                              .pushNamed('/forgetpasswordPage');
-                        },
-                        child: Text(
-                          'Forgot Password',
-                          style: TextStyle(color: Colors.blue, fontSize: 15),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
                 SizedBox(
                   height: 30,
                 ),
@@ -148,32 +171,13 @@ class _LoginPageState extends State<LoginPage> {
                             textStyle:
                                 TextStyle(color: Colors.white, fontSize: 20),
                           ),
-                          onPressed: () async {
-                            setState(() {
-                              loading = true;
-                            });
+                          onPressed: () {
                             if (formkey.currentState!.validate()) {
-                              User? result = await AuthService().loginUser(
-                                  emailController.text,
-                                  passwordController.text,
-                                  context);
-                              if (result != null) {
-                                print("Login Successful");
-
-                                print(result);
-
-                                Navigator.of(context).pushNamedAndRemoveUntil(
-                                    '/homePage', (route) => false);
-                              }
-                            } else {
-                              print("Login Failed");
+                              checkDatabaseForEmail();
                             }
-                            setState(() {
-                              loading = false;
-                            });
                           },
                           child: Text(
-                            'Login',
+                            'Reset Password',
                             style: TextStyle(color: Colors.white, fontSize: 25),
                           ),
                         ),
@@ -181,18 +185,6 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(
                   height: 40,
                 ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pushReplacementNamed('/signupPage');
-                  },
-                  child: Text(
-                    'New User? Create Account',
-                    style: TextStyle(
-                      color: Colors.black.withOpacity(0.7),
-                      fontSize: 15,
-                    ),
-                  ),
-                )
               ],
             ),
           ),

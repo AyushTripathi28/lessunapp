@@ -81,7 +81,7 @@ class _PostReplyContainerState extends State<PostReplyContainer> {
               children: [
                 CircleAvatar(
                   radius: 20,
-                  backgroundImage: NetworkImage(img),
+                  backgroundImage: img.isNotEmpty ? NetworkImage(img) : null,
                 ),
                 SizedBox(
                   width: 10,
