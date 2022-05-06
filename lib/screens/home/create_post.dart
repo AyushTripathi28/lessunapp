@@ -126,6 +126,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                         if (value!.isEmpty) {
                           return "Enter Title";
                         }
+                        return null;
                       },
                       onChanged: (value) {
                         title = value;

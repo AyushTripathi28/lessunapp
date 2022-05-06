@@ -12,7 +12,7 @@ import 'package:lessunapp/widgets/homefeed_container.dart';
 import 'package:zefyrka/zefyrka.dart';
 
 class FeedPostDetailPage extends StatefulWidget {
-  FeedPostDetailPage({
+  const FeedPostDetailPage({
     Key? key,
     required this.body,
     required this.category,
@@ -34,9 +34,9 @@ class FeedPostDetailPage extends StatefulWidget {
   final String userId;
   final String title;
   final String madeat;
-  int replyCount;
+  final int replyCount;
   // int likeCount;
-  bool ifPined;
+  final bool ifPined;
   // bool ifLiked;
 
   @override
@@ -48,9 +48,12 @@ class _FeedPostDetailPageState extends State<FeedPostDetailPage> {
   User? user = FirebaseAuth.instance.currentUser;
   String? img;
   String? userName;
+  int replyCount = 0;
+  bool ifPined = false;
   @override
   void initState() {
-    // TODO: implement initState
+    replyCount = widget.replyCount;
+    ifPined = widget.ifPined;
     getReplyData();
     super.initState();
   }
@@ -95,7 +98,7 @@ class _FeedPostDetailPageState extends State<FeedPostDetailPage> {
           IconButton(
             onPressed: () {
               setState(() {
-                widget.ifPined = !widget.ifPined;
+                ifPined = !ifPined;
                 FirebaseFirestore.instance
                     .collection("forum")
                     .doc(widget.id)
@@ -105,7 +108,7 @@ class _FeedPostDetailPageState extends State<FeedPostDetailPage> {
               });
             },
             icon: Icon(
-              widget.ifPined ? Icons.bookmark : Icons.bookmark_border,
+              ifPined ? Icons.bookmark : Icons.bookmark_border,
               color: Colors.indigo[900],
             ),
           ),
@@ -399,7 +402,7 @@ class _FeedPostDetailPageState extends State<FeedPostDetailPage> {
                               print("not empty");
 
                               setState(() {
-                                widget.replyCount++;
+                                replyCount++;
                               });
                               print(replyController.text);
                               print("object");

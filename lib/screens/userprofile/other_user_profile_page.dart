@@ -3,9 +3,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lessunapp/services/user_service.dart';
-
-import 'edit_profile_page.dart';
 
 class OtherUserProfilePage extends StatefulWidget {
   const OtherUserProfilePage({Key? key, this.uid}) : super(key: key);
@@ -23,7 +20,7 @@ class _OtherUserProfilePageState extends State<OtherUserProfilePage> {
   List _userFollowers = [];
   List _userFollowing = [];
   List _userPosts = [];
-  List _userBlock = [];
+  // List _userBlock = [];
   bool _isUserBlock = false;
 
   User? user = FirebaseAuth.instance.currentUser;
@@ -109,16 +106,21 @@ class _OtherUserProfilePageState extends State<OtherUserProfilePage> {
           ),
           actions: [
             PopupMenuButton(
-                onSelected: (item) => onSelected(context, item as int),
-                itemBuilder: (context) => [
-                      PopupMenuItem(
-                        child: Text(
-                          _isUserBlock ? "Unblock User" : "Block User",
-                          style: TextStyle(fontSize: 13),
-                        ),
-                        value: 0,
-                      ),
-                    ])
+              icon: Icon(
+                Icons.more_vert,
+                color: Colors.black,
+              ),
+              onSelected: (item) => onSelected(context, item as int),
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  child: Text(
+                    _isUserBlock ? "Unblock User" : "Block User",
+                    style: TextStyle(fontSize: 13),
+                  ),
+                  value: 0,
+                ),
+              ],
+            ),
             // IconButton(
             //   icon: Icon(Icons.more_vert, color: Colors.black),
             //   onPressed: () {},

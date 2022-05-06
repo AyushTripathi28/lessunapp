@@ -1,15 +1,12 @@
 // ignore_for_file: prefer_const_constructors, avoid_print
 
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:lessunapp/screens/userprofile/profile_page.dart';
 import 'package:lessunapp/widgets/profile_photo.dart';
-import 'package:lessunapp/widgets/textfield.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({Key? key}) : super(key: key);
@@ -21,7 +18,7 @@ class EditProfilePage extends StatefulWidget {
 class _EditProfilePageState extends State<EditProfilePage> {
   String? _userName;
   // String? _userEmail;
-  String? _userAbout;
+  // String? _userAbout;
   String? _userImage;
   TextEditingController? _aboutController = TextEditingController();
   TextEditingController? _nameController = TextEditingController();
@@ -40,7 +37,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     print(_aboutController!.text);
     print(_userImage);
     final DocumentReference documentReference =
-        await FirebaseFirestore.instance.collection('users').doc(user!.uid);
+        FirebaseFirestore.instance.collection('users').doc(user!.uid);
     documentReference.update({
       'name': _nameController!.text,
       // 'email': _userEmail,
@@ -77,7 +74,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       );
       print("object1hkbfluiKHFnaslikfh");
       print(image!.path);
-      if (image == null) return;
+      // if (image == null) return;
       final imageTemporary = File(image.path);
       setState(() {
         this.image = imageTemporary;

@@ -23,7 +23,6 @@ class _PostReplyContainerState extends State<PostReplyContainer> {
 
   @override
   void initState() {
-    // TODO: implement initState
     getReplyData();
     super.initState();
   }

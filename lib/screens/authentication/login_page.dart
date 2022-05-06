@@ -3,7 +3,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
-import 'package:lessunapp/screens/authentication/signup_page.dart';
 import 'package:lessunapp/services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {

@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class HomeFeedPost extends StatefulWidget {
-  HomeFeedPost({
+  const HomeFeedPost({
     Key? key,
     required this.title,
     required this.category,
@@ -20,10 +20,9 @@ class HomeFeedPost extends StatefulWidget {
   final String? title;
   final String? category;
   final String? userId;
-  int replyCount;
-  List likes;
-
-  bool ifPined;
+  final int replyCount;
+  final List likes;
+  final bool ifPined;
 
   @override
   State<HomeFeedPost> createState() => _HomeFeedPostState();
@@ -32,11 +31,19 @@ class HomeFeedPost extends StatefulWidget {
 class _HomeFeedPostState extends State<HomeFeedPost> {
   User? user = FirebaseAuth.instance.currentUser;
   String userImg = "";
+  int replyCount = 0;
+  bool ifPined = false;
+  List likes = [];
+
+  // List likes;
+
+  // bool ifPined;
 
   @override
   void initState() {
-    // TODO: implement initState
     getUserPhotoData();
+    replyCount = widget.replyCount;
+    ifPined = widget.ifPined;
     super.initState();
   }
 
@@ -143,7 +150,7 @@ class _HomeFeedPostState extends State<HomeFeedPost> {
                                 } else {
                                   return SizedBox(
                                     // width: size.width * 0.3,
-                                    height: size.height * 0.05,
+                                    height: size.height * 0.06,
                                     child: ListView(
                                         physics: NeverScrollableScrollPhysics(),
                                         // scrollDirection: Axis.horizontal,
@@ -185,17 +192,17 @@ class _HomeFeedPostState extends State<HomeFeedPost> {
                     InkWell(
                       onTap: () {
                         setState(() {
-                          widget.ifPined = !widget.ifPined;
+                          ifPined = !ifPined;
                           FirebaseFirestore.instance
                               .collection("forum")
                               .doc(widget.id)
                               .update({
-                            "pinned": widget.ifPined,
+                            "pinned": ifPined,
                           });
                         });
                       },
                       child: Icon(
-                        widget.ifPined ? Icons.bookmark : Icons.bookmark_border,
+                        ifPined ? Icons.bookmark : Icons.bookmark_border,
                         color: Colors.indigo[900],
                       ),
                     ),
@@ -207,22 +214,22 @@ class _HomeFeedPostState extends State<HomeFeedPost> {
                     InkWell(
                       onTap: () async {
                         setState(() {
-                          widget.likes.contains(user!.uid)
-                              ? widget.likes.remove(user!.uid)
-                              : widget.likes.add(user!.uid);
+                          likes.contains(user!.uid)
+                              ? likes.remove(user!.uid)
+                              : likes.add(user!.uid);
                         });
-                        print(widget.likes);
+                        print(likes);
                         print("working on adding");
                         await FirebaseFirestore.instance
                             .collection("forum")
                             .doc(widget.id)
                             .update({
-                          "likes": widget.likes,
+                          "likes": likes,
                         });
                         print("added successfull");
                       },
                       child: Icon(
-                        widget.likes.contains(user!.uid)
+                        likes.contains(user!.uid)
                             ? Icons.favorite
                             : Icons.favorite_border,
                         color: Colors.red,
@@ -232,9 +239,7 @@ class _HomeFeedPostState extends State<HomeFeedPost> {
                     SizedBox(
                       width: 8,
                     ),
-                    widget.likes.isEmpty
-                        ? Text("0")
-                        : Text(widget.likes.length.toString()),
+                    likes.isEmpty ? Text("0") : Text(likes.length.toString()),
                     SizedBox(
                       width: 30,
                     ),
@@ -245,7 +250,7 @@ class _HomeFeedPostState extends State<HomeFeedPost> {
                     SizedBox(
                       width: 8,
                     ),
-                    Text(widget.replyCount.toString()),
+                    Text(replyCount.toString()),
                     SizedBox(
                       width: 8,
                     ),

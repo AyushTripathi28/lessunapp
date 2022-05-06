@@ -46,12 +46,6 @@ class _HomePageState extends State<HomePage> {
         elevation: 0,
         actions: [
           IconButton(
-            icon: Icon(Icons.post_add, color: Colors.black),
-            onPressed: () {
-              Navigator.pushNamed(context, "/makePostPage");
-            },
-          ),
-          IconButton(
             icon: Icon(Icons.exit_to_app, color: Colors.black),
             onPressed: () async {
               setState(() {
@@ -65,12 +59,12 @@ class _HomePageState extends State<HomePage> {
               });
             },
           ),
+          SizedBox(
+            width: size.width * 0.05,
+          ),
           IconButton(
             icon: Icon(Icons.person, color: Colors.black),
             onPressed: () async {
-              // String? uid = await LocalStore.getUid("uid");
-              // print(uid);
-
               Navigator.pushNamed(context, "/profilePage");
             },
           ),
@@ -215,6 +209,12 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, "/makePostPage");
+        },
+        child: Icon(Icons.post_add),
+      ),
     );
   }
 }

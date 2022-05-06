@@ -2,13 +2,12 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:lessunapp/model/user.dart';
 
 CollectionReference users = FirebaseFirestore.instance.collection('users');
 
 class UserService {
   Future getUserData(String? uid) async {
-    var user_list = [];
+    // var userList = [];
 
     DocumentSnapshot data = await users.doc(uid).get();
     print(data.data());
@@ -46,7 +45,7 @@ class UserService {
 class GetUserData extends StatelessWidget {
   final String documentId;
 
-  GetUserData(this.documentId);
+  const GetUserData(this.documentId, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
