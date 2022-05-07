@@ -1,7 +1,8 @@
-# Lessun App
+# *Lessun App*
 
-## MIT based startup that is working on a student networking platform where student can share their notes and the experience to the worldwide market and grow a strong connection. 
-### Tech:- Flutter, Firebase(Cloud backend, Database, Authentication), Deployment.
+> MIT based startup that is working on a student networking platform where student can share their notes and the experience to the worldwide market and grow a strong connection. 
+
+`Tech:- Flutter, Firebase(Cloud backend, Database, Authentication), Deployment.`
 <hr/>
 <div>
 <img src="https://user-images.githubusercontent.com/37010915/167236826-d50f665c-3dd8-4b93-bc4c-7429d9d62ac0.png" width="220px" height="450px" />
